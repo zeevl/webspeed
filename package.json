@@ -1,0 +1,32 @@
+{
+  "name": "webspeed",
+  "version": "0.0.0",
+  "description": "How fast does your web page load?",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/zeevl/webspeed.git"
+  },
+  "keywords": [
+    "speed",
+    "load",
+    "testing",
+    "page"
+  ],
+  "author": "Steve Lamb",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zeevl/webspeed/issues"
+  },
+  "homepage": "https://github.com/zeevl/webspeed",
+  "dependencies": {
+    "webdriverio": "~2.3.0",
+    "selenium-standalone": "~2.44.0"
+  },
+  "devDependencies": {
+    "coffee-script": "~1.8.0"
+  }
+}
