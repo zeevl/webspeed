@@ -1,53 +1,50 @@
-selenium = require("selenium-standalone")
+async = require 'async'
+fs = require 'fs'
+seleniumStandalone = require 'selenium-standalone'
 webdriverio = require 'webdriverio'
 
-webdriverOptions = 
-  desiredCapabilities:
-    browserName: 'chrome'
 
-server = selenium stdio: 'pipe'
-server.on 'error', (err) ->
-  throw err
+module.exports =
+  run: (url, callback) ->
+    webdriverOptions =
+      desiredCapabilities:
+        browserName: 'chrome'
 
-server.on 'exit', (code) ->
-  console.log 'selenium exited with code ', code
+    async.parallel
+      js: (done) => @readScript done
+      server: (done) => @startSelenium done
+    , (err, results) =>
+      if err then callback(err, null); return
 
-server.on 'message', (msg) ->
-  console.log 'selenium msg', msg
+      webdriverio
+        .remote(webdriverOptions)
+        .init()
+        .url url
+        .execute results.js, (err, stats) ->
+          callback null, stats.value
+        .end =>
+          @selenium.kill()
 
-server.stderr.on 'data', (output) ->
-  str = output.toString()
-  console.log str
+  readScript: (callback) ->
+    if @js then callback(null, @js); return
 
-  if str.indexOf('Started SocketListener') isnt -1 
-    webdriverio
-      .remote(webdriverOptions)
-      .init()
-      .url 'http://google.com'
-      .execute 'return window.performance.timing', (err, ret) ->
-        console.log('ERR: ', err) if err
-        console.log ret
-      .end()
+    fs.readFile "#{__dirname}/js/perfStats.js", encoding: 'utf8', (err, js) ->
+      @js = js
+      callback err, js
 
-server.stdout.on 'data', (output) ->
-  console.log 'STDOUT: ', output.toString()
+  startSelenium: (callback) ->
+    if @selenium then callback(null, @selenium); return
 
+    @selenium = seleniumStandalone stdio: 'pipe'
 
-# # options to pass to `java -jar selenium-server-standalone-X.XX.X.jar`
-# seleniumArgs = ["-debug"]
-# server = selenium(spawnOptions, seleniumArgs)
-# server.stdout.on "data", (output) ->
-#   console.log output
+    @selenium.on 'error', (err) ->
+      console.log 'selenium child process error! ', err
 
-# server.stdout.on "error", (output) ->
-#   console.log output
+    @selenium.on 'exit', (code) ->
+      console.log 'selenium exited with code ', code
 
+    @selenium.stderr.on 'data', (output) ->
+      str = output.toString()
 
-
-
-  # or, var server = selenium();
-  # returns ChildProcess instance
-  # http://nodejs.org/api/child_process.html#child_process_class_childprocess
-
-  # spawnOptions defaults to `{ stdio: 'inherit' }`
-  # seleniumArgs defaults to `[]`
+      if str.indexOf('Started SocketListener') isnt -1
+        callback null, @selenium
