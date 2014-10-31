@@ -1,0 +1,10 @@
+#!/usr/bin/env node
+
+require('coffee-script/register');
+var webspeed = require('../src/webspeed');
+
+webspeed.run('http://moz.com', function(err, results) {
+  if(err) console.log(err);
+
+  console.log(results);
+});

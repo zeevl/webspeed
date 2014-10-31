@@ -1,36 +1,37 @@
+_ = require 'underscore'
 async = require 'async'
 fs = require 'fs'
 seleniumStandalone = require 'selenium-standalone'
 webdriverio = require 'webdriverio'
-
+pageMethods = require './page_methods'
+Stats = require './stats'
 
 module.exports =
-  run: (url, callback) ->
+  run: (url, options, callback) ->
+    if _.isFunction(options)
+      callback = options
+      options = {}
+
+    options = _.extend timeout: 10000, options
+
     webdriverOptions =
       desiredCapabilities:
         browserName: 'chrome'
+        chromeOptions:
+          # this isn't working..
+          args: ['--disable-application-cache', '--start-maximized']
 
-    async.parallel
-      js: (done) => @readScript done
-      server: (done) => @startSelenium done
-    , (err, results) =>
-      if err then callback(err, null); return
-
+    @startSelenium =>
       webdriverio
         .remote(webdriverOptions)
         .init()
+        .timeoutsAsyncScript options.timeout
         .url url
-        .execute results.js, (err, stats) ->
-          callback null, stats.value
+        .executeAsync pageMethods.getPerformance, (err, stats) ->
+          callback err, Stats.parse stats?.value
         .end =>
           @selenium.kill()
 
-  readScript: (callback) ->
-    if @js then callback(null, @js); return
-
-    fs.readFile "#{__dirname}/js/perfStats.js", encoding: 'utf8', (err, js) ->
-      @js = js
-      callback err, js
 
   startSelenium: (callback) ->
     if @selenium then callback(null, @selenium); return
@@ -45,6 +46,6 @@ module.exports =
 
     @selenium.stderr.on 'data', (output) ->
       str = output.toString()
-
+      console.log str
       if str.indexOf('Started SocketListener') isnt -1
         callback null, @selenium
