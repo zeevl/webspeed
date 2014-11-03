@@ -12,14 +12,27 @@ module.exports =
       callback = options
       options = {}
 
-    options = _.extend timeout: 10000, options
+    options = _.extend
+      timeout: 30 * 1000
+      disableCache: false
+    , options
 
     webdriverOptions =
       desiredCapabilities:
         browserName: 'chrome'
-        chromeOptions:
-          # this isn't working..
-          args: ['--disable-application-cache', '--start-maximized']
+
+    if options.disableCache
+      webdriverOptions.desiredCapabilities.chromeOptions =
+        args: [
+          'disable-media-cache'
+          'disable-application-cache'
+          'disk-cache-size=1'
+          'media-cache-size=1'
+          'disk-cache-dir=/dev/null'
+        ]
+
+    # are we starting selenium in this run()?
+    iStartedSelenium = not @selenium
 
     @startSelenium =>
       webdriverio
@@ -30,7 +43,7 @@ module.exports =
         .executeAsync pageMethods.getPerformance, (err, stats) ->
           callback err, Stats.parse stats?.value
         .end =>
-          @selenium.kill()
+          if iStartedSelenium then @selenium.kill()
 
 
   startSelenium: (callback) ->
@@ -41,11 +54,12 @@ module.exports =
     @selenium.on 'error', (err) ->
       console.log 'selenium child process error! ', err
 
-    @selenium.on 'exit', (code) ->
-      console.log 'selenium exited with code ', code
-
     @selenium.stderr.on 'data', (output) ->
       str = output.toString()
-      console.log str
+
       if str.indexOf('Started SocketListener') isnt -1
         callback null, @selenium
+
+  stopSelenium: ->
+    @selenium?.kill()
+

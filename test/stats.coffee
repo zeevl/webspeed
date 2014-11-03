@@ -23,7 +23,7 @@ describe 'stats.parse', ->
   it 'sorts the resources array by startTime', ->
     last = 0
     for r in stats.resources
-      expect(last).to.be.below r.startTime
+      expect(last).to.be.at.most r.startTime
       last = r.startTime
 
   it 'sets totalLoadTime to when after all resources have loaded', ->

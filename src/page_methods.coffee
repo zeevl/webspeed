@@ -4,20 +4,23 @@
 # must be fully self-contained.
 module.exports =
   getPerformance: (callback) ->
-    isComplete = ->
-      document.readyState == 'complete'
+    to = 0
+    setStatsTimeout = (ms) ->
+      clearTimeout to
+      to = setTimeout ->
+        callback
+          pageTiming: window.performance.timing
+          resourceTiming: window.performance.getEntries()
+      , ms
 
-    waitForComplete = (done) ->
-      if isComplete then done(); return
-      i = setInterval ->
-        if document.readyState == 'complete'
-          clearInterval i
-          done();
-      , 10
+    # when the document is complete, wait another 10s
+    # for onload to finish.
+    if document.readyState is 'complete'
+      setStatsTimeout 10 * 1000
+    else
+      document.onreadystatechange = ->
+        if document.readyState is 'complete'
+          setStatsTimeout 10 * 1000
 
-    waitForComplete ->
-      stats =
-        pageTiming: window.performance.timing
-        resourceTiming: window.performance.getEntries()
-
-      callback stats
+    window.onload = ->
+      setStatsTimeout 10

@@ -8,18 +8,22 @@ module.exports =
     start = rawStats.pageTiming.navigationStart
     parsedStats = {}
 
-    for k, v of rawStats.pageTiming
-      if v then parsedStats[k] = v - start
+    maxTime = 0
+    for k, v of rawStats.pageTiming when v
+      parsedStats[k] = v - start
+      maxTime = Math.max maxTime, parsedStats[k]
 
-    parsedStats.duration = parsedStats.loadEventEnd
+    parsedStats.duration = maxTime
     parsedStats.resources = _.sortBy rawStats.resourceTiming, (r) -> r.startTime
 
     parsedStats.resources = @roundNumbers parsedStats.resources
 
     maxResource = _.max rawStats.resourceTiming, (r) -> r.responseEnd
+    resourceLoadTime = Math.round(maxResource.responseEnd) or 0
 
-    parsedStats.totalLoadTime = Math.max Math.round(maxResource.responseEnd),
-      parsedStats.loadEventEnd
+    parsedStats.totalLoadTime =
+      Math.max parsedStats.duration, resourceLoadTime
+
 
     parsedStats.hostLatency = @getHostLatencies parsedStats.resources
 
