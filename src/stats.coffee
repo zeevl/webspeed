@@ -9,8 +9,8 @@ module.exports =
     parsedStats = {}
 
     maxTime = 0
-    for k, v of rawStats.pageTiming when v
-      parsedStats[k] = v - start
+    for k, v of rawStats.pageTiming
+      parsedStats[k] = if v is 0 then 0 else v - start
       maxTime = Math.max maxTime, parsedStats[k]
 
     parsedStats.duration = maxTime

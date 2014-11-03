@@ -2,18 +2,70 @@
 
 require('coffee-script/register');
 
+var _ = require('underscore');
 var async = require('async');
 var webspeed = require('../src/webspeed');
+var Table = require('cli-table');
 
 if(process.argv.length < 3) {
   console.log('Usage: webspeed <url>');
   process.exit();
 }
 
-webspeed.run(process.argv[2], {disableCache: true}, function(err, results) {
-  if(err)
-    console.log(err);
+var url = process.argv[2];
+console.log('Testing ' + url);
 
-  console.log(results);
+webspeed.run(url, {disableCache: true}, function(err, results) {
+  if(err) {
+    console.log(err);
+    return;
+  }
+
+  var table = new Table({chars: {
+      'top': '',
+      'top-mid': '',
+      'top-left': '' ,
+      'top-right': '',
+      'bottom': '' ,
+      'bottom-mid': '' ,
+      'bottom-left': '' ,
+      'bottom-right': '',
+      'left': '' ,
+      'left-mid': '' ,
+      'mid': '' ,
+      'mid-mid': '',
+      'right': '' ,
+      'right-mid': '' ,
+      'middle': ' '
+    }
+  });
+  table.push(
+    ['Total Load Time:', results.duration + 'ms'],
+    ['Domain Lookup Start:', results.domainLookupStart + 'ms'],
+    ['Domain Lookup End:', results.domainLookupEnd + 'ms'],
+    ['Fetch Start:', results.fetchStart + 'ms'],
+    ['Navigattion Start:', results.navigationStart + 'ms'],
+    ['Connect Start:', results.connectStart + 'ms'],
+    ['Secure Connect Start:', results.secureConnectionStart + 'ms'],
+    ['Connect End:', results.connectEnd + 'ms'],
+    ['Request Start:', results.requestStart + 'ms'],
+    ['Response Start:', results.responseStart + 'ms'],
+    ['Response End:', results.responseEnd + 'ms'],
+    ['DOM Loading:', results.domLoading + 'ms'],
+    ['DOM Content Loaded Event Start:', results.domContentLoadedEventStart + 'ms'],
+    ['DOM Interactive:', results.domInteractive + 'ms'],
+    ['DOM Content Loaded Event End:', results.domContentLoadedEventEnd + 'ms'],
+    ['DOM Complete:', results.domComplete + 'ms'],
+    ['Load Event Start:', results.loadEventStart + 'ms'],
+    ['Load Event End:', results.loadEventEnd + 'ms'],
+    ['', ''],
+    ['Host Latency:', '']
+  );
+  _.each(results.hostLatency, function(ms, host) {
+    table.push(['  ' + host, ms + 'ms']);
+  });
+
+  console.log(table.toString());
+
 });
 
