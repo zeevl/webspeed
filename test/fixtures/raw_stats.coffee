@@ -2,94 +2,65 @@ module.exports =
   get: ->
     now = Date.now()
 
-    pageTiming:
-      navigationStart: now
-      redirectStart: now + 1
-      redirectEnd: now + 2
-      fetchStart: now + 3
-      domainLookupStart: now + 4
-      domainLookupEnd: now + 5
-      connectStart: now + 6
-      secureConnectionStart: now + 7
-      connectEnd: now + 8
-      requestStart: now + 9
-      responseStart: now + 10
-      responseEnd: now + 11
-      domLoading: now + 12
-      domInteractive: now + 13
-      domContentLoadedEventStart: now + 14
-      domContentLoadedEventEnd: now + 15
-      domComplete: now + 16
-      loadEventStart: now + 17
-      loadEventEnd: now + 18
-      unloadEventEnd: 0
-      unloadEventStart: 0
-    resourceTiming: [
-      entryType: 'resource'
-      responseEnd: 1280.05100000883
-      responseStart: 0
-      domainLookupEnd: 0
-      domainLookupStart: 0
-      redirectEnd: 0
-      duration: 9.85600001877174
-      redirectStart: 0
-      connectEnd: 0
-      connectStart: 0
-      requestStart: 0
-      secureConnectionStart: 0
-      name: 'http://pixel.quantserve.com/pixel.png'
-      startTime: 1270.19499999005
-      fetchStart: 1270.19499999005
-      initiatorType: 'img'
-    ,
-      entryType: 'resource'
-      responseEnd: 1275.0003905
-      responseStart: 0
-      domainLookupEnd: 0
-      domainLookupStart: 0
-      redirectEnd: 0
-      duration: 9.85600001877174
-      redirectStart: 0
-      connectEnd: 0
-      connectStart: 0
-      requestStart: 0
-      secureConnectionStart: 0
-      name: 'http://pixel.quantserve.com/pixel2.png'
-      startTime: 1270.19499999005
-      fetchStart: 1270.19499999005
-      initiatorType: 'img'
-    ,
-      entryType: 'resource'
-      responseEnd: 501.143000001321
-      responseStart: 498.794999992242
-      domainLookupEnd: 491.225000005215
-      domainLookupStart: 489.211999985855
-      redirectEnd: 0
-      duration: 14.1010000079405
-      redirectStart: 0
-      connectEnd: 493.201000004774
-      connectStart: 491.225000005215
-      requestStart: 493.270000006305
-      secureConnectionStart: 0
-      name: 'http://cdn.optimizely.com/js/582120801.js'
-      startTime: 487.04199999338
-      fetchStart: 487.04199999338
-      initiatorType: 'script'
-    ,
-      entryType: 'resource'
-      responseEnd: 974.58199999528
-      responseStart: 0
-      domainLookupEnd: 0
-      domainLookupStart: 0
-      redirectEnd: 0
-      duration: 505.183000001125
-      redirectStart: 0
-      connectEnd: 0
-      connectStart: 0
-      requestStart: 0
-      secureConnectionStart: 0
-      name: 'http://dc8hdnsmzapvm.cloudfront.net/assets/images/home/circle-icon-3.png?50d12bbb5b8be8880348422b56586c03'
-      startTime: 469.398999994155
-      fetchStart: 469.398999994155
-      initiatorType: 'img'
-    ]
+    { onLoadStarted: 16,
+      domContentLoaded: 1746,
+      loadEventStart: 2247,
+      loadEventEnd: 2401,
+      resources:
+       { '1': { start: 1, url: 'http://cnn.com/', end: 159, duration: 158 },
+         '2':
+          { start: 158,
+            url: 'http://www.cnn.com/',
+            end: 461,
+            duration: 303 },
+         '3':
+          { start: 449,
+            url: 'http://z.cdn.turner.com/cnn/tmpl_asset/static/www_homepage/2980/css/hplib-min.css',
+            end: 482,
+            duration: 33 },
+         '4':
+          { start: 450,
+            url: 'http://z.cdn.turner.com/cnn/tmpl_asset/static/www_homepage/2980/css/elexlib-min.css',
+            end: 473,
+            duration: 23 },
+         '5':
+          { start: 450,
+            url: 'http://z.cdn.turner.com/cnn/.e/js/libs/jquery-1.7.2.min.js',
+            end: 512,
+            duration: 62 },
+         '6':
+          { start: 451,
+            url: 'http://z.cdn.turner.com/cnn/.e/js/libs/jquery.timeago.min.js',
+            end: 481,
+            duration: 30 },
+         '7':
+          { start: 451,
+            url: 'http://z.cdn.turner.com/cnn/.e/js/libs/protoaculous.1.8.2.min.js',
+            end: 529,
+            duration: 78 },
+         '8':
+          { start: 451,
+            url: 'http://z.cdn.turner.com/cnn/tmpl_asset/static/www_homepage/2980/js/hplib-min.js',
+            end: 543,
+            duration: 92 },
+         '9':
+          { start: 452,
+            url: 'http://cdn.optimizely.com/js/131788053.js',
+            end: 468,
+            duration: 16 },
+         '10':
+          { start: 452,
+            url: 'http://i.cdn.turner.com/cnn/macalerts/js/safaripush.js',
+            end: 512,
+            duration: 60 },
+         '11':
+          { start: 455,
+            url: 'http://widgets.outbrain.com/outbrain.js',
+            end: 529,
+            duration: 74 },
+         '12':
+          { start: 457,
+            url: 'http://i.cdn.turner.com/cnn/.e/widget/loader/1.0.0/load.min.js',
+            end: 542,
+            duration: 85 } },
+      duration: 2866 }

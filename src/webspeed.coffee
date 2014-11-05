@@ -1,9 +1,7 @@
 _ = require 'underscore'
-async = require 'async'
-fs = require 'fs'
-seleniumStandalone = require 'selenium-standalone'
-webdriverio = require 'webdriverio'
-pageMethods = require './page_methods'
+path = require 'path'
+childProcess = require 'child_process'
+phantomPath = require('phantomjs').path
 Stats = require './stats'
 
 module.exports =
@@ -17,49 +15,19 @@ module.exports =
       disableCache: false
     , options
 
-    webdriverOptions =
-      desiredCapabilities:
-        browserName: 'chrome'
+    phantomArgs = [
+      path.join __dirname, './page_performance.coffee'
+      url
+    ]
 
-    if options.disableCache
-      webdriverOptions.desiredCapabilities.chromeOptions =
-        args: [
-          'disable-media-cache'
-          'disable-application-cache'
-          'disk-cache-size=1'
-          'media-cache-size=1'
-          'disk-cache-dir=/dev/null'
-        ]
+    childProcess.execFile phantomPath, phantomArgs, {timeout: 30000}, (err, stdout, stderr) ->
+      match = stdout.match /JSON:(.+)/
+      if not match
+        throw new Error 'Invalid output from phantom!\n' + stdout
 
-    # are we starting selenium in this run()?
-    iStartedSelenium = not @selenium
+      try
+        console.log JSON.parse match[1]
+      catch e
+        throw new Error 'Error parsing phantom output!\n' + stdout, e
 
-    @startSelenium =>
-      webdriverio
-        .remote(webdriverOptions)
-        .init()
-        .timeoutsAsyncScript options.timeout
-        .url url
-        .executeAsync pageMethods.getPerformance, (err, stats) ->
-          callback err, Stats.parse stats?.value
-        .end =>
-          if iStartedSelenium then @selenium.kill()
-
-
-  startSelenium: (callback) ->
-    if @selenium then callback(null, @selenium); return
-
-    @selenium = seleniumStandalone stdio: 'pipe'
-
-    @selenium.on 'error', (err) ->
-      console.log 'selenium child process error! ', err
-
-    @selenium.stderr.on 'data', (output) ->
-      str = output.toString()
-
-      if str.indexOf('Started SocketListener') isnt -1
-        callback null, @selenium
-
-  stopSelenium: ->
-    @selenium?.kill()
-
+      callback()

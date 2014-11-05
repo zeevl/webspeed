@@ -21,6 +21,9 @@ webspeed.run(url, {disableCache: true}, function(err, results) {
     return;
   }
 
+  console.log(results)
+  return;
+
   var table = new Table({chars: {
       'top': '',
       'top-mid': '',
@@ -44,7 +47,7 @@ webspeed.run(url, {disableCache: true}, function(err, results) {
     ['Domain Lookup Start:', results.domainLookupStart + 'ms'],
     ['Domain Lookup End:', results.domainLookupEnd + 'ms'],
     ['Fetch Start:', results.fetchStart + 'ms'],
-    ['Navigattion Start:', results.navigationStart + 'ms'],
+    ['Navigation Start:', results.navigationStart + 'ms'],
     ['Connect Start:', results.connectStart + 'ms'],
     ['Secure Connect Start:', results.secureConnectionStart + 'ms'],
     ['Connect End:', results.connectEnd + 'ms'],
