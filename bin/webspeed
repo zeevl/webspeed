@@ -15,7 +15,7 @@ if(process.argv.length < 3) {
 var url = process.argv[2];
 console.log('Testing ' + url);
 
-webspeed.run(url, {disableCache: true}, function(err, results) {
+webspeed.run(url, {timeout: 30000}, function(err, results) {
   if(err) {
     console.log(err);
     return;
