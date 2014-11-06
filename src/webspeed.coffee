@@ -21,6 +21,8 @@ module.exports =
     ]
 
     childProcess.execFile phantomPath, phantomArgs, {timeout: 30000}, (err, stdout, stderr) ->
+      console.log stdout
+
       match = stdout.match /JSON:(.+)/
       if not match
         throw new Error 'Invalid output from phantom!\n' + stdout

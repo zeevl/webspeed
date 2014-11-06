@@ -5,45 +5,51 @@ module.exports =
   parse: (rawStats) ->
     return unless rawStats
 
-    start = rawStats.pageTiming.navigationStart
-    parsedStats = {}
+    stats = @initStats rawStats
+    stats = @processResources stats, rawStats
+    stats = @averageHostSpeeds stats
 
-    maxTime = 0
-    for k, v of rawStats.pageTiming
-      parsedStats[k] = if v is 0 then 0 else v - start
-      maxTime = Math.max maxTime, parsedStats[k]
+    return stats
 
-    parsedStats.duration = maxTime
-    parsedStats.resources = _.sortBy rawStats.resourceTiming, (r) -> r.startTime
+  initStats: (rawStats) ->
+    _.extend _.clone(rawStats),
+      resources: []
+      hosts: {}
+      resourcesLoaded: rawStats.loadEventEnd
 
-    parsedStats.resources = @roundNumbers parsedStats.resources
+  processResources: (stats, rawStats) ->
+    for k, r of rawStats.resources
+      stats.resources.push r
+      stats.resourcesLoaded = Math.max stats.resourcesLoaded, r.end
 
-    maxResource = _.max rawStats.resourceTiming, (r) -> r.responseEnd
-    resourceLoadTime = Math.round(maxResource.responseEnd) or 0
-
-    parsedStats.totalLoadTime =
-      Math.max parsedStats.duration, resourceLoadTime
-
-
-    parsedStats.hostLatency = @getHostLatencies parsedStats.resources
-
-    return parsedStats
-
-  roundNumbers: (resources) ->
-    _.map resources, (resource) ->
-      newr = {}
-      newr[k] = (if isNaN(v) then v else Math.round v) for k, v of resource
-      return newr
-
-  getHostLatencies: (resources) ->
-    hosts = {}
-    for resource in resources
-      url = Url.parse resource.name
+      url = Url.parse r.url
       host = "#{url.protocol}//#{url.host}"
-      latency = resource.responseEnd - resource.fetchStart
-      hosts[host] = Math.max latency, (hosts[host] or 0)
+      stats.hosts[host] ?=
+        speeds: []
+        resourceCount: 0
 
-    return hosts
+      stats.hosts[host].resourceCount++
 
+      if r.size
+        if not stats.largestResource or stats.largestResource.size < r.size
+          stats.largestResource = r
 
+        speed = ((r.size * 8.0) / (r.duration / 1000.0)) / 1000.0
 
+        stats.hosts[host].speed = parseFloat speed.toFixed 2
+        stats.hosts[host].speeds.push stats.hosts[host].speed
+
+    return stats
+
+  averageHostSpeeds: (stats) ->
+    for k, host of stats.hosts when host.speeds.length > 0
+      host.speed = host.speeds
+        .map (x, i, arr) -> x / arr.length
+        .reduce (a, b) -> a + b
+
+      if not stats.slowestHost or stats.hosts[stats.slowestHost].speed < host.speed
+        stats.slowestHost = k
+
+      delete host.speeds
+
+    return stats

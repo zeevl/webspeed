@@ -46,10 +46,10 @@ page.onCallback = (data) ->
 #   console.log 'CONSOLE: ' + msg
 
 page.onLoadStarted = ->
-  stats.onLoadStarted = Date.now() - startTime
+  stats.pageReceived = Date.now() - startTime
 
 page.onLoadFinished = ->
-  stats.duration = Date.now() - startTime
+  stats.pageLoaded = Date.now() - startTime
   resetExitTimer()
 
 page.onInitialized = ->
@@ -103,7 +103,9 @@ page.onResourceReceived = (r) ->
   resources[r.id].size = r.bodySize
 
   unless r.bodySize
-    lenHeaders = parseInt(header.value) for header in r.headers when header.name.toLowerCase() is 'content-length'
+    for header in r.headers when header.name.toLowerCase() is 'content-length'
+      resources[r.id].size = parseInt(header.value)
+      resources[r.id].fromheaders = true
 
 
 startTime = Date.now();
