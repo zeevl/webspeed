@@ -110,4 +110,5 @@ page.onResourceReceived = (r) ->
 
 startTime = Date.now();
 page.open url, (status) ->
+  stats.url = url
 
