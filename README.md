@@ -35,9 +35,11 @@ webspeed.run('http://stackoverflow.com', options, function(err, results) {
 });
 ```
 
+All sizes are in bytes, speeds are in Mbps.
+
 Easy peasy.
 
-### Testig
+### Testing
 ```
 $ npm run test
 ```
