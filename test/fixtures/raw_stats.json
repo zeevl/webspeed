@@ -1,0 +1,34 @@
+{ "pageReceived": 17,
+  "domContentLoaded": 392,
+  "loadEventStart": 2081,
+  "loadEventEnd": 2083,
+  "resources":
+   { "1":
+      { "start": 3,
+        "url": "http://stackoverflow.com/",
+        "end": 285,
+        "duration": 282 },
+     "2":
+      { "start": 218,
+        "url": "http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js",
+        "end": 268,
+        "duration": 50 },
+     "3":
+      { "start": 218,
+        "url": "http://cdn.sstatic.net/Js/stub.en.js?v=7bd5359278db",
+        "end": 4000,
+        "duration": 3782,
+        "size": 500 },
+     "4":
+      { "start": 219,
+        "url": "http://cdn.sstatic.net/stackoverflow/all.css?v=847253e69e95",
+        "end": 322,
+        "duration": 103,
+        "size": 666 },
+     "5":
+      { "start": 350,
+        "url": "http://i.stack.imgur.com/tKsDb.png",
+        "end": 5678,
+        "duration": 5328,
+        "size": 259 } },
+  "pageLoaded": 1605 }
