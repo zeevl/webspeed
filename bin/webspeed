@@ -21,9 +21,6 @@ webspeed.run(url, {disableCache: true}, function(err, results) {
     return;
   }
 
-  console.log(results)
-  return;
-
   var table = new Table({chars: {
       'top': '',
       'top-mid': '',
@@ -43,29 +40,23 @@ webspeed.run(url, {disableCache: true}, function(err, results) {
     }
   });
   table.push(
-    ['Total Load Time:', results.duration + 'ms'],
-    ['Domain Lookup Start:', results.domainLookupStart + 'ms'],
-    ['Domain Lookup End:', results.domainLookupEnd + 'ms'],
-    ['Fetch Start:', results.fetchStart + 'ms'],
-    ['Navigation Start:', results.navigationStart + 'ms'],
-    ['Connect Start:', results.connectStart + 'ms'],
-    ['Secure Connect Start:', results.secureConnectionStart + 'ms'],
-    ['Connect End:', results.connectEnd + 'ms'],
-    ['Request Start:', results.requestStart + 'ms'],
-    ['Response Start:', results.responseStart + 'ms'],
-    ['Response End:', results.responseEnd + 'ms'],
-    ['DOM Loading:', results.domLoading + 'ms'],
-    ['DOM Content Loaded Event Start:', results.domContentLoadedEventStart + 'ms'],
-    ['DOM Interactive:', results.domInteractive + 'ms'],
-    ['DOM Content Loaded Event End:', results.domContentLoadedEventEnd + 'ms'],
-    ['DOM Complete:', results.domComplete + 'ms'],
+    ['Latency:', results.latency + 'ms'],
+    ['DOM Content Loaded:', results.domContentLoaded + 'ms'],
     ['Load Event Start:', results.loadEventStart + 'ms'],
     ['Load Event End:', results.loadEventEnd + 'ms'],
+    ['Resource Count:', results.resources.length],
+    // ['Largest Resource:', results.largestResource.url + ' (' +
+    //   results.largestResource.size + ' bytes)'],
+    // ['Smallest Resource:', results.smallestResource.url + ' (' +
+    //   results.smallestResource.size + ' bytes)'],
+    ['Fastest Host:', results.fastestHost],
+    ['Slowest Host:', results.slowestHost],
     ['', ''],
-    ['Host Latency:', '']
+    ['Hosts:', '']
   );
-  _.each(results.hostLatency, function(ms, host) {
-    table.push(['  ' + host, ms + 'ms']);
+  _.each(results.hosts, function(data, host) {
+    table.push(['  ' + host,
+      data.resourceCount + ' resources @ ~' + (data.speed || '?') + 'Mbps']);
   });
 
   console.log(table.toString());

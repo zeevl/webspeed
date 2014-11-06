@@ -15,6 +15,12 @@ describe 'stats.parse', ->
   it 'determines largest resource', ->
     expect(stats.largestResource.size).to.equal 666
 
+  it 'dtermines smallest resource', ->
+    expect(stats.smallestResource.size).to.equal 259
+
+  it 'determines fastest host', ->
+    expect(stats.fastestHost).to.equal 'http://i.stack.imgur.com'
+
   it 'determines slowest host', ->
     expect(stats.slowestHost).to.equal 'http://cdn.sstatic.net'
 

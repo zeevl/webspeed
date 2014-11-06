@@ -46,7 +46,7 @@ page.onCallback = (data) ->
 #   console.log 'CONSOLE: ' + msg
 
 page.onLoadStarted = ->
-  stats.pageReceived = Date.now() - startTime
+  stats.latency = Date.now() - startTime
 
 page.onLoadFinished = ->
   stats.pageLoaded = Date.now() - startTime
@@ -97,10 +97,10 @@ page.onResourceRequested = (r) ->
 
 page.onResourceReceived = (r) ->
   resetExitTimer()
-  return unless r.stage is 'end'
+
   resources[r.id].end = Date.now() - startTime
   resources[r.id].duration = resources[r.id].end - resources[r.id].start
-  resources[r.id].size = r.bodySize
+  if r.bodySize then resources[r.id].size = r.bodySize
 
   unless r.bodySize
     for header in r.headers when header.name.toLowerCase() is 'content-length'

@@ -21,15 +21,14 @@ module.exports =
     ]
 
     childProcess.execFile phantomPath, phantomArgs, {timeout: 30000}, (err, stdout, stderr) ->
-      console.log stdout
-
       match = stdout.match /JSON:(.+)/
       if not match
-        throw new Error 'Invalid output from phantom!\n' + stdout
+        callback new Error 'Invalid output from phantom!\n' + stdout
 
+      result = null
       try
-        console.log JSON.parse match[1]
+        result = JSON.parse match[1]
       catch e
-        throw new Error 'Error parsing phantom output!\n' + stdout, e
+        callback new Error 'Error parsing phantom output!\n' + stdout, e
 
-      callback()
+      callback null, Stats.parse result
