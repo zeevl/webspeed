@@ -15,12 +15,18 @@ module.exports =
       disableCache: false
     , options
 
+    # handle the case when 'google.com' is passed in, instead
+    # of 'http://google.com'
+    unless /^http/.test(url) then url = 'http://' + url
+
     phantomArgs = [
       path.join __dirname, './page_performance.coffee'
       url
     ]
 
     childProcess.execFile phantomPath, phantomArgs, {timeout: 30000}, (err, stdout, stderr) ->
+      console.log 'stdout:', stdout
+
       match = stdout.match /JSON:(.+)/
       if not match
         callback new Error 'Invalid output from phantom!\n' + stdout
